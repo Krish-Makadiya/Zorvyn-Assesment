@@ -47,7 +47,7 @@ const TransactionStats = () => {
         const y = maxVal > 0 ? 100 - ((d[dataKey] / maxVal) * 100) : 100;
         return `${x},${y}`;
     }).join(' ');
-    
+
     // Pie Chart Data Logic mappings from our dummy sources
     const latestExpenseData = currentData[currentData.length - 1]; // Automatically sync to final month/year depending on user dropdown
     const pieData = [
@@ -58,7 +58,7 @@ const TransactionStats = () => {
         { label: 'Utilities', value: latestExpenseData.utilities, color: '#ec4899' }
     ];
     const totalPieExpense = pieData.reduce((acc, curr) => acc + curr.value, 0) || 1;
-    
+
     // SVG Arithmetic to convert value percentages into explicit circular slice placements
     let currentPercent = 0;
     const pieSlices = pieData.map((slice, i) => {
@@ -66,9 +66,9 @@ const TransactionStats = () => {
         const dashArray = `${percent} ${100 - percent}`;
         const dashOffset = -currentPercent;
         currentPercent += percent;
-        
+
         const isHovered = hoveredPieSlice === i;
-        
+
         return (
             <circle
                 key={i}
@@ -86,7 +86,7 @@ const TransactionStats = () => {
             />
         );
     });
-    
+
     // Polygon points for the gradient area under the line
     const firstX = ((0 + 0.5) / currentData.length) * 100;
     const lastX = currentData.length > 0 ? (((currentData.length - 1) + 0.5) / currentData.length) * 100 : 0;
@@ -314,28 +314,28 @@ const TransactionStats = () => {
                                 ${totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </p>
                         </div>
-                        
+
                         {/* Period Dropdown */}
                         <div className="relative">
-                            <button 
+                            <button
                                 onClick={() => setDropdownOpen(!dropdownOpen)}
                                 className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-50 hover:bg-slate-100 dark:bg-[#1a1b1e] dark:hover:bg-zinc-800/80 transition-colors text-[13px] font-medium text-slate-600 dark:text-zinc-300 border border-slate-200/60 dark:border-zinc-800"
                             >
                                 {cashFlowView === 'monthly' ? 'Monthly' : 'Yearly'}
                                 <ChevronDown size={14} className={`transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
-                            
+
                             {dropdownOpen && (
                                 <>
                                     <div className="fixed inset-0 z-20" onClick={() => setDropdownOpen(false)}></div>
                                     <div className="absolute right-0 top-full mt-2 bg-white dark:bg-[#1f2025] border border-slate-100 dark:border-zinc-800 shadow-xl rounded-xl overflow-hidden min-w-[130px] z-30 py-1">
-                                        <button 
+                                        <button
                                             className={`w-full text-left px-5 py-2.5 text-sm transition-colors ${cashFlowView === 'monthly' ? 'text-emerald-500 bg-emerald-50/50 dark:bg-emerald-500/10' : 'text-slate-600 hover:bg-slate-50 dark:text-zinc-300 dark:hover:bg-zinc-800/80'}`}
                                             onClick={() => { setCashFlowView('monthly'); setDropdownOpen(false); }}
                                         >
                                             Monthly
                                         </button>
-                                        <button 
+                                        <button
                                             className={`w-full text-left px-5 py-2.5 text-sm transition-colors ${cashFlowView === 'yearly' ? 'text-emerald-500 bg-emerald-50/50 dark:bg-emerald-500/10' : 'text-slate-600 hover:bg-slate-50 dark:text-zinc-300 dark:hover:bg-zinc-800/80'}`}
                                             onClick={() => { setCashFlowView('yearly'); setDropdownOpen(false); }}
                                         >
@@ -358,11 +358,10 @@ const TransactionStats = () => {
                                         setCashFlowCategory(cat);
                                         if (cat !== 'expense') setExpenseSubCategory('all');
                                     }}
-                                    className={`px-5 sm:px-6 py-1.5 rounded-full text-[13px] sm:text-sm font-semibold transition-all duration-300 capitalize ${
-                                        cashFlowCategory === cat 
-                                            ? 'bg-white dark:bg-[#2c2d33] text-light-primary-text dark:text-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]' 
+                                    className={`px-5 sm:px-6 py-1.5 rounded-full text-[13px] sm:text-sm font-semibold transition-all duration-300 capitalize ${cashFlowCategory === cat
+                                            ? 'bg-white dark:bg-[#2c2d33] text-light-primary-text dark:text-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]'
                                             : 'text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200'
-                                    }`}
+                                        }`}
                                 >
                                     {cat}
                                 </button>
@@ -376,11 +375,10 @@ const TransactionStats = () => {
                                     <button
                                         key={subcat}
                                         onClick={() => setExpenseSubCategory(subcat)}
-                                        className={`px-3 py-1.5 sm:py-1 rounded-full text-[11px] sm:text-[12px] font-semibold transition-all duration-200 capitalize ${
-                                            expenseSubCategory === subcat
+                                        className={`px-3 py-1.5 sm:py-1 rounded-full text-[11px] sm:text-[12px] font-semibold transition-all duration-200 capitalize ${expenseSubCategory === subcat
                                                 ? 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30'
                                                 : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50 dark:bg-[#232428] dark:text-zinc-400 dark:border-zinc-700/50 dark:hover:bg-[#2a2b30]'
-                                        } border shadow-sm cursor-pointer`}
+                                            } border shadow-sm cursor-pointer`}
                                     >
                                         {subcat === 'all' ? 'All Expenses' : subcat}
                                     </button>
@@ -396,7 +394,7 @@ const TransactionStats = () => {
                             {yAxisLabels.map((val, idx) => (
                                 <div key={idx} className="flex flex-row items-center w-full relative h-[1px]">
                                     <span className="text-[10px] sm:text-xs font-semibold text-slate-400 dark:text-zinc-500 w-8 sm:w-10 text-right pr-2 shrink-0 -mt-[11px]">
-                                        {val >= 1000 ? `${(val/1000).toFixed(0)}k` : val.toFixed(0)}
+                                        {val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val.toFixed(0)}
                                     </span>
                                     {/* Line extends behind everything cleanly */}
                                     <div className="absolute left-8 sm:left-10 right-0 border-b border-dashed border-slate-200/80 dark:border-zinc-800/80 z-0"></div>
@@ -414,20 +412,20 @@ const TransactionStats = () => {
                                         <stop offset="100%" stopColor="#a6fc21" stopOpacity="0.01" />
                                     </linearGradient>
                                 </defs>
-                                
+
                                 {/* Area Under the line */}
-                                <polygon 
-                                    points={polygonPoints} 
-                                    fill="url(#areaGradient)" 
+                                <polygon
+                                    points={polygonPoints}
+                                    fill="url(#areaGradient)"
                                     vectorEffect="non-scaling-stroke"
                                 />
 
                                 {/* The stroke line */}
-                                <polyline 
-                                    points={linePoints} 
-                                    fill="none" 
-                                    stroke="#a6fc21" 
-                                    strokeWidth="3" 
+                                <polyline
+                                    points={linePoints}
+                                    fill="none"
+                                    stroke="#a6fc21"
+                                    strokeWidth="3"
                                     vectorEffect="non-scaling-stroke"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
@@ -443,7 +441,7 @@ const TransactionStats = () => {
                                     const isHovered = hoveredBarIndex === i;
 
                                     return (
-                                        <div 
+                                        <div
                                             key={i}
                                             className="absolute w-6 h-6 -ml-3 -mt-3 flex items-center justify-center cursor-pointer group"
                                             style={{ left: `${x}%`, top: `${y}%` }}
@@ -455,9 +453,9 @@ const TransactionStats = () => {
 
                                             {/* Visible Dot */}
                                             <div className={`w-3.5 h-3.5 rounded-full bg-white dark:bg-[#1a1b1e] transition-all duration-300 ${isHovered ? 'border-4 border-[#9fff00] scale-150 shadow-[0_0_12px_rgba(166,252,33,0.8)]' : 'border-[3px] border-[#a6fc21] dark:border-[#a6fc21] shadow-sm'}`}></div>
-                                            
+
                                             {/* Tooltip */}
-                                            <div 
+                                            <div
                                                 className={`absolute bottom-full mb-3 pointer-events-none bg-black text-white dark:bg-white dark:text-black text-[12px] sm:text-[14px] font-bold px-3 py-1.5 rounded-lg whitespace-nowrap transition-all duration-200 z-30 shadow-xl flex flex-col items-center ${isHovered ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95'}`}
                                             >
                                                 ${d[dataKey].toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -494,7 +492,7 @@ const TransactionStats = () => {
                             <circle r="15.915494309189533" cx="21" cy="21" fill="transparent" stroke="#f1f5f9" className="dark:stroke-zinc-800/60" strokeWidth="6" />
                             {pieSlices}
                         </svg>
-                        
+
                         {/* Hollow Center Aggregation */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-[2px] z-20">
                             {hoveredPieSlice !== null ? (

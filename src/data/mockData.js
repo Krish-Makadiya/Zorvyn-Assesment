@@ -11,7 +11,7 @@ export const stats = [
         amount: 12540.00,
         percentage: "100%",
         icon: Coins,
-        colorClass: "text-blue-500 bg-blue-500/10"
+        colorClass: "text-light-primary bg-light-primary/10 dark:text-dark-primary dark:bg-dark-primary/10"
     },
     {
         id: 2,
@@ -19,7 +19,7 @@ export const stats = [
         amount: 5200.00,
         percentage: "41%",
         icon: Coins,
-        colorClass: "text-blue-500 bg-blue-500/10"
+        colorClass: "text-light-secondary bg-light-secondary/10 dark:text-dark-secondary dark:bg-dark-secondary/10"
     },
     {
         id: 3,
@@ -27,7 +27,7 @@ export const stats = [
         amount: 3150.00,
         percentage: "25%",
         icon: Coins,
-        colorClass: "text-blue-500 bg-blue-500/10"
+        colorClass: "text-light-fail bg-light-fail/10 dark:text-dark-fail dark:bg-dark-fail/10"
     },
     {
         id: 4,
@@ -35,7 +35,7 @@ export const stats = [
         amount: "39%",
         percentage: "39%",
         icon: Coins,
-        colorClass: "text-blue-500 bg-blue-500/10"
+        colorClass: "text-light-success bg-light-success/10 dark:text-dark-success dark:bg-dark-success/10"
     }
 ]
 
@@ -89,7 +89,6 @@ const baseYearly = [
 ];
 
 const addSubcategories = (data) => data.map((item, index) => {
-    // Deterministic varied distribution replacing rigid multipliers 
     const v1 = (index % 4) * 0.04; 
     const v2 = (index % 3) * 0.05;
     const v3 = (index % 5) * 0.03;
