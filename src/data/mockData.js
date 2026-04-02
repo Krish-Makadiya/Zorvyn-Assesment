@@ -1,0 +1,110 @@
+import { Coins } from "lucide-react";
+
+export const savingsData = {
+    totalSavings: 12540.00,
+}
+
+export const stats = [
+    {
+        id: 1,
+        title: "Total Balance",
+        amount: 12540.00,
+        percentage: "100%",
+        icon: Coins,
+        colorClass: "text-blue-500 bg-blue-500/10"
+    },
+    {
+        id: 2,
+        title: "Monthly Income",
+        amount: 5200.00,
+        percentage: "41%",
+        icon: Coins,
+        colorClass: "text-blue-500 bg-blue-500/10"
+    },
+    {
+        id: 3,
+        title: "Monthly Expenses",
+        amount: 3150.00,
+        percentage: "25%",
+        icon: Coins,
+        colorClass: "text-blue-500 bg-blue-500/10"
+    },
+    {
+        id: 4,
+        title: "Savings Rate",
+        amount: "39%",
+        percentage: "39%",
+        icon: Coins,
+        colorClass: "text-blue-500 bg-blue-500/10"
+    }
+]
+
+export const paymentHistory = [
+    { id: "PAY-12345XYZ", amount: 1164.99, currency: "USD", to: "Kathryn Murphy", avatar: "https://i.pravatar.cc/150?u=1", period: "Mar 10 - Mar 15", method: "Wire Transfer", status: "Completed" },
+    { id: "TXN-98765A9", amount: 1072.98, currency: "USD", to: "Guy Hawkins", avatar: "https://i.pravatar.cc/150?u=2", period: "Mar 11 - Mar 12", method: "Bank Transfer", status: "Completed" },
+    { id: "INV-56789LMN", amount: 977.98, currency: "USD", to: "Wade Warren", avatar: "https://i.pravatar.cc/150?u=3", period: "Mar 4 - Mar 8", method: "Wire Transfer", status: "Pending" },
+    { id: "ORD-99887PQR", amount: 535.98, currency: "USD", to: "Annette Black", avatar: "https://i.pravatar.cc/150?u=4", period: "Feb 1 - Feb 15", method: "Bank Transfer", status: "Completed" },
+    { id: "PAY-34567ABC", amount: 845.50, currency: "USD", to: "Esther Howard", avatar: "https://i.pravatar.cc/150?u=5", period: "Jan 20 - Jan 25", method: "Credit Card", status: "Completed" },
+    { id: "TXN-11223CC", amount: 450.00, currency: "USD", to: "Cameron Williamson", avatar: "https://i.pravatar.cc/150?u=6", period: "Jan 10 - Jan 15", method: "Bank Transfer", status: "Failed" },
+    { id: "INV-77889QQ", amount: 2340.00, currency: "USD", to: "Brooklyn Simmons", avatar: "https://i.pravatar.cc/150?u=7", period: "Jan 1 - Jan 5", method: "Wire Transfer", status: "Completed" },
+    { id: "PAY-66554XX", amount: 780.25, currency: "USD", to: "Leslie Alexander", avatar: "https://i.pravatar.cc/150?u=8", period: "Dec 15 - Dec 20", method: "Credit Card", status: "Pending" },
+    { id: "ORD-11559MM", amount: 1250.75, currency: "USD", to: "Jenny Wilson", avatar: "https://i.pravatar.cc/150?u=9", period: "Dec 5 - Dec 10", method: "Bank Transfer", status: "Completed" },
+    { id: "TXN-99887RR", amount: 430.00, currency: "USD", to: "Kristin Watson", avatar: "https://i.pravatar.cc/150?u=10", period: "Nov 25 - Nov 30", method: "Wire Transfer", status: "Completed" },
+    { id: "PAY-33445WW", amount: 670.90, currency: "USD", to: "Eleanor Pena", avatar: "https://i.pravatar.cc/150?u=11", period: "Nov 15 - Nov 20", method: "Bank Transfer", status: "Completed" },
+    { id: "INV-22334ZZ", amount: 890.00, currency: "USD", to: "Robert Fox", avatar: "https://i.pravatar.cc/150?u=12", period: "Nov 1 - Nov 5", method: "Wire Transfer", status: "Failed" },
+    { id: "ORD-55443YY", amount: 1540.50, currency: "USD", to: "Jacob Jones", avatar: "https://i.pravatar.cc/150?u=13", period: "Oct 20 - Oct 25", method: "Credit Card", status: "Completed" },
+    { id: "PAY-77665UU", amount: 320.00, currency: "USD", to: "Cody Fisher", avatar: "https://i.pravatar.cc/150?u=14", period: "Oct 10 - Oct 15", method: "Bank Transfer", status: "Completed" },
+    { id: "TXN-88776TT", amount: 210.25, currency: "USD", to: "Courtney Henry", avatar: "https://i.pravatar.cc/150?u=15", period: "Oct 1 - Oct 5", method: "Wire Transfer", status: "Pending" },
+    { id: "INV-99001SS", amount: 675.00, currency: "USD", to: "Albert Flores", avatar: "https://i.pravatar.cc/150?u=16", period: "Sep 20 - Sep 25", method: "Bank Transfer", status: "Completed" },
+    { id: "ORD-33221RR", amount: 430.80, currency: "USD", to: "Theresa Webb", avatar: "https://i.pravatar.cc/150?u=17", period: "Sep 10 - Sep 15", method: "Credit Card", status: "Completed" },
+    { id: "PAY-66554QQ", amount: 550.00, currency: "USD", to: "Dianne Russell", avatar: "https://i.pravatar.cc/150?u=18", period: "Sep 1 - Sep 5", method: "Wire Transfer", status: "Completed" },
+    { id: "TXN-44332PP", amount: 980.50, currency: "USD", to: "Jane Cooper", avatar: "https://i.pravatar.cc/150?u=19", period: "Aug 20 - Aug 25", method: "Bank Transfer", status: "Failed" },
+    { id: "INV-11223OO", amount: 1340.00, currency: "USD", to: "Savannah Nguyen", avatar: "https://i.pravatar.cc/150?u=20", period: "Aug 10 - Aug 15", method: "Wire Transfer", status: "Completed" },
+];
+
+const baseMonthly = [
+    { label: "Jan", income: 10500, expense: 5200, savings: 5300 },
+    { label: "Feb", income: 14000, expense: 8000, savings: 6000 },
+    { label: "Mar", income: 12000, expense: 11000, savings: 1000 },
+    { label: "Apr", income: 15500, expense: 6200, savings: 9300 },
+    { label: "May", income: 11500, expense: 9000, savings: 2500 },
+    { label: "Jun", income: 10000, expense: 6000, savings: 4000 },
+    { label: "Jul", income: 17500, expense: 8000, savings: 9500 },
+    { label: "Aug", income: 27500, expense: 12000, savings: 15500 },
+    { label: "Sep", income: 14500, expense: 9500, savings: 5000 },
+    { label: "Oct", income: 14000, expense: 7000, savings: 7000 },
+    { label: "Nov", income: 14000, expense: 7200, savings: 6800 },
+    { label: "Dec", income: 15000, expense: 8500, savings: 6500 },
+];
+
+const baseYearly = [
+    { label: "2019", income: 120000, expense: 70000, savings: 50000 },
+    { label: "2020", income: 135000, expense: 75000, savings: 60000 },
+    { label: "2021", income: 125000, expense: 80000, savings: 45000 },
+    { label: "2022", income: 150000, expense: 85000, savings: 65000 },
+    { label: "2023", income: 165000, expense: 90000, savings: 75000 },
+    { label: "2024", income: 180000, expense: 105000, savings: 75000 },
+    { label: "2025", income: 210000, expense: 115000, savings: 95000 },
+    { label: "2026", income: 245000, expense: 125000, savings: 120000 },
+];
+
+const addSubcategories = (data) => data.map((item, index) => {
+    // Deterministic varied distribution replacing rigid multipliers 
+    const v1 = (index % 4) * 0.04; 
+    const v2 = (index % 3) * 0.05;
+    const v3 = (index % 5) * 0.03;
+
+    return {
+        ...item,
+        housing: Math.max(0, item.expense * (0.35 + v1)),
+        food: Math.max(0, item.expense * (0.30 - v2)),
+        transport: Math.max(0, item.expense * (0.10 + v3)),
+        entertainment: Math.max(0, item.expense * (0.15 + v2 - v1)),
+        utilities: Math.max(0, item.expense * (0.10 - v3))
+    };
+});
+
+export const cashFlowData = {
+    monthly: addSubcategories(baseMonthly),
+    yearly: addSubcategories(baseYearly)
+};
