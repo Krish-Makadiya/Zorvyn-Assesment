@@ -96,8 +96,8 @@ While this project focuses on a high-speed, persistent static dataset to demonst
 ### **Portfolio Showcase (Other Domains):**
 | **Project** | **Domain** | **Visual Preview** | **Live Link** |
 | :--- | :--- | :--- | :--- |
-| **Arogya** | Healthcare (Live Patient Stats) | ![Arogya Healthcare](https://res.cloudinary.com/dcwoprlbv/image/upload/q_auto/f_auto/v1775207872/arogya-bay-six.vercel.app_patient_dashboard_drpyxu.png) | [🔗 View Live Project](https://arogya-healthcare.link/) |
-| **Mockraft** | EdTech (Student Performance) | ![Mockraft EdTech](https://res.cloudinary.com/dcwoprlbv/image/upload/q_auto/f_auto/v1775207872/dashboard_3_ja9ecd.png) | [🔗 View Live Project](https://mockraft-edtech.link/) |
+| **Arogya** | Healthcare (Live Patient Stats) | ![Arogya Healthcare](https://res.cloudinary.com/dcwoprlbv/image/upload/q_auto/f_auto/v1775207872/arogya-bay-six.vercel.app_patient_dashboard_drpyxu.png) | [🔗 View Live Project]([https://arogya-healthcare.link/](https://arogya-bay-six.vercel.app/)) |
+| **Mockraft** | EdTech (Student Performance) | ![Mockraft EdTech](https://res.cloudinary.com/dcwoprlbv/image/upload/q_auto/f_auto/v1775207872/dashboard_3_ja9ecd.png) | [🔗 View Live Project]([https://mockraft-edtech.link/](https://mockraft.vercel.app/)) |
 
 ---
 
