@@ -68,13 +68,21 @@ const TransactionStats = () => {
         return `${x},${y}`;
     }).join(' ');
 
-    const latestExpenseData = currentData[currentData.length - 1] || {};
+    // Aggregate sub-categories across the entire period for true data integrity
+    const aggregateData = currentData.reduce((acc, month) => ({
+        housing: acc.housing + (month.housing || 0),
+        food: acc.food + (month.food || 0),
+        transport: acc.transport + (month.transport || 0),
+        entertainment: acc.entertainment + (month.entertainment || 0),
+        utilities: acc.utilities + (month.utilities || 0)
+    }), { housing: 0, food: 0, transport: 0, entertainment: 0, utilities: 0 });
+
     const pieData = [
-        { label: 'Housing', value: latestExpenseData.housing || 0, color: '#3b82f6' },
-        { label: 'Food', value: latestExpenseData.food || 0, color: '#10b981' },
-        { label: 'Transport', value: latestExpenseData.transport || 0, color: '#f59e0b' },
-        { label: 'Entertainment', value: latestExpenseData.entertainment || 0, color: '#8b5cf6' },
-        { label: 'Utilities', value: latestExpenseData.utilities || 0, color: '#ec4899' }
+        { label: 'Housing', value: aggregateData.housing, color: '#3b82f6' },
+        { label: 'Food', value: aggregateData.food, color: '#10b981' },
+        { label: 'Transport', value: aggregateData.transport, color: '#f59e0b' },
+        { label: 'Entertainment', value: aggregateData.entertainment, color: '#8b5cf6' },
+        { label: 'Utilities', value: aggregateData.utilities, color: '#ec4899' }
     ];
 
     const totalPieExpense = pieData.reduce((acc, curr) => acc + curr.value, 0) || 1;
@@ -121,7 +129,7 @@ const TransactionStats = () => {
     }, { scope: containerRef });
 
     return (
-        <div className="w-full" ref={containerRef}>
+        <div className="stats-overview w-full" ref={containerRef}>
             <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-5 gap-4 md:gap-3 h-full min-h-[800px]">
 
                 {/* Highlighted Hero Card: Smart Saving */}
@@ -171,13 +179,13 @@ const TransactionStats = () => {
                                         {stat.title}
                                     </h3>
                                 </div>
-                                <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-400 px-2 py-0.5 rounded-full whitespace-nowrap">
+                                <div className="flex items-center gap-1 text-[14px] font-bold text-light-primary dark:text-dark-primary bg-light-primary/10 dark:bg-dark-primary/10 px-2 py-1 rounded-full whitespace-nowrap">
                                     <span>+{stat.percentage}</span>
-                                    <TrendingUp size={14} strokeWidth={3} />
+                                    <TrendingUp size={18} strokeWidth={3} />
                                 </div>
                             </div>
 
-                            <div className={`absolute bottom-2 right-2 w-32 h-32 opacity-10  transform translate-x-8 translate-y-8 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-700 ease-out pointer-events-none z-0 ${stat.colorClass ? stat.colorClass.split(' ')[0] : 'text-blue-500'}`}>
+                            <div className={`absolute bottom-2 right-2 w-26 h-26 opacity-10  transform translate-x-8 translate-y-8 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-700 ease-out pointer-events-none z-0 ${stat.colorClass ? stat.colorClass.split(' ')[0] : 'text-blue-500'}`}>
                                 <StatIcon className="w-full h-full" strokeWidth={2.5} />
                             </div>
 
@@ -222,7 +230,7 @@ const TransactionStats = () => {
                                 </div>
 
                                 <div className="flex justify-between items-end z-10 relative">
-                                    <span className="text-[13px] sm:text-sm font-medium tracking-wide text-white/90">Robart Esperanza</span>
+                                    <span className="text-[13px] sm:text-sm font-medium tracking-wide text-white/90">Krish Makadiya</span>
 
                                     <div className="flex gap-4 sm:gap-5 text-right">
                                         <div className="flex flex-col">
@@ -278,7 +286,7 @@ const TransactionStats = () => {
                         <div className="bg-slate-50 dark:bg-[#151517] p-4 rounded-2xl border border-slate-100 dark:border-zinc-800/80 shadow-sm flex-1 flex flex-col justify-between">
                             <div>
                                 <p className="text-[13px] font-medium text-slate-500 dark:text-zinc-400 mb-1">AI-Generated Spending Limits</p>
-                                <h4 className="text-[22px] font-bold text-light-primary-text dark:text-gray-100 tracking-tight">$4,815.23</h4>
+                                <h4 className="text-[22px] font-bold text-light-primary-text dark:text-gray-100 tracking-tight">₹4,815.23</h4>
                             </div>
 
                             <div className="mt-4 pt-1">
@@ -326,7 +334,7 @@ const TransactionStats = () => {
                                 Cash Flow
                             </h2>
                             <p className="text-3xl sm:text-4xl font-bold text-light-primary-text dark:text-dark-primary-text tracking-tight">
-                                ${totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                ₹{totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </p>
                         </div>
 
@@ -391,7 +399,7 @@ const TransactionStats = () => {
                                         key={subcat}
                                         onClick={() => setExpenseSubCategory(subcat)}
                                         className={`px-3 py-1.5 sm:py-1 rounded-full text-[11px] sm:text-[12px] font-semibold transition-all duration-200 capitalize ${expenseSubCategory === subcat
-                                            ? 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30'
+                                            ? 'bg-light-primary/20 text-light-primary-text border-light-primary-text/20 dark:bg-dark-primary/20 dark:text-dark-primary-text dark:border-dark-primary-text/20'
                                             : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50 dark:bg-[#232428] dark:text-zinc-400 dark:border-zinc-700/50 dark:hover:bg-[#2a2b30]'
                                             } border shadow-sm cursor-pointer`}
                                     >
@@ -403,7 +411,7 @@ const TransactionStats = () => {
                     </div>
 
                     {/* Chart Area */}
-                    <div className="flex-1 w-full relative min-h-[220px] pb-1">
+                    <div className="flex-1 w-full relative min-h-[220px] pb-1 mt-5">
                         {/* Background Lines & Y-Axis */}
                         <div className="absolute inset-x-0 inset-y-0 flex flex-col justify-between pb-8 pt-2">
                             {yAxisLabels.map((val, idx) => (
@@ -473,7 +481,7 @@ const TransactionStats = () => {
                                             <div
                                                 className={`absolute bottom-full mb-3 pointer-events-none bg-black text-white dark:bg-white dark:text-black text-[12px] sm:text-[14px] font-bold px-3 py-1.5 rounded-lg whitespace-nowrap transition-all duration-200 z-30 shadow-xl flex flex-col items-center ${isHovered ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95'}`}
                                             >
-                                                ${d[dataKey].toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                ₹{d[dataKey].toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                 <div className="absolute -bottom-[3px] w-3 h-3 bg-black dark:bg-white rotate-45 rounded-[1px] -z-10"></div>
                                             </div>
                                         </div>
@@ -516,7 +524,7 @@ const TransactionStats = () => {
                                         {pieData[hoveredPieSlice].label}
                                     </p>
                                     <p className="text-[22px] font-extrabold text-light-primary-text dark:text-dark-primary-text tracking-tight leading-none">
-                                        ${(pieData[hoveredPieSlice].value / 1000).toFixed(1)}k
+                                        ₹{(pieData[hoveredPieSlice].value / 1000).toFixed(1)}k
                                     </p>
                                     <div className="mt-1.5 flex items-center justify-center px-2 py-[2px] rounded-full bg-slate-100 dark:bg-zinc-800 border border-slate-200/60 dark:border-zinc-700">
                                         <p className="text-[9px] font-bold text-slate-500 dark:text-zinc-400">
@@ -526,9 +534,9 @@ const TransactionStats = () => {
                                 </>
                             ) : (
                                 <div className="flex flex-col items-center animate-in fade-in zoom-in duration-300">
-                                    <p className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest leading-none mb-1.5">{latestExpenseData.label}</p>
+                                    <p className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest leading-none mb-1.5">PERIOD TOTAL</p>
                                     <p className="text-lg font-bold text-slate-700 dark:text-zinc-300 tracking-tight leading-none opacity-90">
-                                        ${(totalPieExpense / 1000).toFixed(1)}k
+                                        ₹{(totalPieExpense / 1000).toFixed(1)}k
                                     </p>
                                 </div>
                             )}

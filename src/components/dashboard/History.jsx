@@ -88,7 +88,7 @@ const History = () => {
     };
 
     return (
-        <div className="w-full bg-white dark:bg-[#131216] rounded-xl border border-slate-200 dark:border-[#262626] overflow-hidden flex flex-col font-sans shadow-sm dark:shadow-none transition-colors duration-300">
+        <div className="history-container w-full bg-white dark:bg-[#131216] rounded-xl border border-slate-200 dark:border-[#262626] overflow-hidden flex flex-col font-sans shadow-sm dark:shadow-none transition-colors duration-300">
             {/* Top Toolbar */}
             <div className="p-4 border-b border-slate-100 dark:border-[#262626] flex flex-wrap items-center justify-between gap-4 transition-colors">
                 <div className="flex flex-wrap items-center gap-3">
@@ -118,11 +118,6 @@ const History = () => {
                         </select>
                         <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-60" />
                     </div>
-
-                    <button className="flex items-center gap-2 bg-transparent text-slate-600 dark:text-[#a3a3a3] border border-transparent px-3 py-2.5 rounded-lg text-[13px] hover:bg-slate-50 dark:hover:bg-[#1f1f23] transition-colors font-medium">
-                        <Calendar size={15} className="text-slate-400 dark:text-[#a3a3a3]" />
-                        Range
-                    </button>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -151,7 +146,28 @@ const History = () => {
                     <span className="text-[12px] text-slate-400 dark:text-[#525252] font-medium mr-2">
                         Showing {displayedHistory.length} of {filteredAndSortedHistory.length}
                     </span>
-                    <button className="p-2 text-slate-400 dark:text-[#a3a3a3] opacity-80 hover:opacity-100 transition-colors bg-transparent hover:bg-slate-50 dark:hover:bg-[#1f1f23] rounded-lg group">
+                    <button 
+                        onClick={() => {
+                            const headers = ["ID", "Amount", "Recipient", "Period", "Method", "Status"];
+                            const rows = displayedHistory.map(p => [
+                                p.id, p.amount, p.to, p.period, p.method, p.status
+                            ]);
+                            
+                            let csvContent = "data:text/csv;charset=utf-8," 
+                                + headers.join(",") + "\n"
+                                + rows.map(e => e.join(",")).join("\n");
+
+                            const encodedUri = encodeURI(csvContent);
+                            const link = document.createElement("a");
+                            link.setAttribute("href", encodedUri);
+                            link.setAttribute("download", `FinVision_Transactions_${new Date().toISOString().split('T')[0]}.csv`);
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }}
+                        className="p-2 text-slate-400 dark:text-[#a3a3a3] opacity-80 hover:opacity-100 transition-colors bg-transparent hover:bg-slate-50 dark:hover:bg-[#1f1f23] rounded-lg group"
+                        title="Export current view to CSV"
+                    >
                         <Download size={18} strokeWidth={2.5} className="group-hover:scale-110 transition-transform" />
                     </button>
                 </div>
@@ -164,7 +180,7 @@ const History = () => {
                         <tr className="border-b border-slate-100 dark:border-[#262626] bg-slate-50/50 dark:bg-transparent">
                             <th className="py-4 pl-5 font-normal text-slate-500 dark:text-[#a3a3a3] text-[13.5px] w-12 border-r border-slate-100 dark:border-[#262626] transition-colors">
                                 <div
-                                    className={`w-[18px] h-[18px] rounded-[4px] border ${selectedItems.length > 0 && selectedItems.length === displayedHistory.length ? 'border-emerald-500 bg-emerald-500/20 text-emerald-600 dark:text-emerald-500 flex items-center justify-center' : 'border-slate-300 dark:border-[#404040] bg-white dark:bg-transparent hover:bg-slate-100 dark:hover:bg-[#1f1f23]'} cursor-pointer transition-colors`}
+                                    className={`w-[18px] h-[18px] rounded-[4px] border ${selectedItems.length > 0 && selectedItems.length === displayedHistory.length ? 'border-light-primary bg-light-primary/20 text-light-primary-text dark:text-light-primary dark:border-light-primary flex items-center justify-center' : 'border-slate-300 dark:border-[#404040] bg-white dark:bg-transparent hover:bg-slate-100 dark:hover:bg-[#1f1f23]'} cursor-pointer transition-colors`}
                                     onClick={toggleSelectAll}
                                 >
                                     {selectedItems.length > 0 && selectedItems.length === displayedHistory.length && (
@@ -219,7 +235,7 @@ const History = () => {
                                 >
                                     <td className="py-4 pl-5 w-12 border-r border-slate-100 dark:border-[#262626] transition-colors">
                                         <div
-                                            className={`w-[18px] h-[18px] rounded-[4px] border ${selectedItems.includes(payment.id) ? 'border-emerald-500 bg-emerald-500/20 text-emerald-600 dark:text-emerald-500 flex items-center justify-center' : 'border-slate-300 dark:border-[#404040] bg-white dark:bg-transparent hover:bg-slate-100 dark:hover:bg-[#1f1f23]'} cursor-pointer transition-colors`}
+                                            className={`w-[18px] h-[18px] rounded-[4px] border ${selectedItems.includes(payment.id) ? 'border-light-primary bg-light-primary/20 text-light-primary-text dark:text-light-primary dark:border-light-primary flex items-center justify-center' : 'border-slate-300 dark:border-[#404040] bg-white dark:bg-transparent hover:bg-slate-100 dark:hover:bg-[#1f1f23]'} cursor-pointertransition-colors`}
                                             onClick={() => toggleSelect(payment.id)}
                                         >
                                             {selectedItems.includes(payment.id) && (
@@ -231,7 +247,7 @@ const History = () => {
                                         {payment.id}
                                     </td>
                                     <td className="py-4 px-6 text-[13px] text-slate-800 dark:text-[#e5e5e5] border-r border-slate-100 dark:border-[#262626] whitespace-nowrap transition-colors">
-                                        <span className="font-semibold">${payment.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span> <span className="text-slate-500 dark:text-[#a3a3a3] ml-1 text-[11px] font-medium">{payment.currency || 'USD'}</span>
+                                        <span className="font-semibold">₹{payment.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span> <span className="text-slate-500 dark:text-[#a3a3a3] ml-1 text-[11px] font-medium"></span>
                                     </td>
                                     <td className="py-4 px-6 border-r border-slate-100 dark:border-[#262626] whitespace-nowrap transition-colors">
                                         <div className="flex items-center gap-3">
@@ -311,7 +327,7 @@ const AddTransactionModal = ({ onClose, onSubmit }) => {
     const [formData, setFormData] = useState({
         to: '',
         amount: '',
-        currency: 'USD',
+        currency: 'INR',
         status: 'Completed',
         method: 'Bank Transfer'
     });

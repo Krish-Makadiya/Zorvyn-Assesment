@@ -47,7 +47,7 @@ export const paymentHistory = [
     {
         id: "PAY-12345XYZ",
         amount: 1164.99,
-        currency: "USD",
+        currency: "INR",
         to: "Kathryn Murphy",
         avatar: "https://i.pravatar.cc/150?u=1",
         period: "Mar 10 - Mar 15",
@@ -57,7 +57,7 @@ export const paymentHistory = [
     {
         id: "TXN-98765A9",
         amount: 1072.98,
-        currency: "USD",
+        currency: "INR",
         to: "Guy Hawkins",
         avatar: "https://i.pravatar.cc/150?u=2",
         period: "Mar 11 - Mar 12",
@@ -67,7 +67,7 @@ export const paymentHistory = [
     {
         id: "INV-56789LMN",
         amount: 977.98,
-        currency: "USD",
+        currency: "INR",
         to: "Wade Warren",
         avatar: "https://i.pravatar.cc/150?u=3",
         period: "Mar 4 - Mar 8",
@@ -77,7 +77,7 @@ export const paymentHistory = [
     {
         id: "ORD-99887PQR",
         amount: 535.98,
-        currency: "USD",
+        currency: "INR",
         to: "Annette Black",
         avatar: "https://i.pravatar.cc/150?u=4",
         period: "Feb 1 - Feb 15",
@@ -87,7 +87,7 @@ export const paymentHistory = [
     {
         id: "PAY-34567ABC",
         amount: 845.5,
-        currency: "USD",
+        currency: "INR",
         to: "Esther Howard",
         avatar: "https://i.pravatar.cc/150?u=5",
         period: "Jan 20 - Jan 25",
@@ -97,7 +97,7 @@ export const paymentHistory = [
     {
         id: "TXN-11223CC",
         amount: 450.0,
-        currency: "USD",
+        currency: "INR",
         to: "Cameron Williamson",
         avatar: "https://i.pravatar.cc/150?u=6",
         period: "Jan 10 - Jan 15",
@@ -107,7 +107,7 @@ export const paymentHistory = [
     {
         id: "INV-77889QQ",
         amount: 2340.0,
-        currency: "USD",
+        currency: "INR",
         to: "Brooklyn Simmons",
         avatar: "https://i.pravatar.cc/150?u=7",
         period: "Jan 1 - Jan 5",
@@ -117,7 +117,7 @@ export const paymentHistory = [
     {
         id: "PAY-66554XX",
         amount: 780.25,
-        currency: "USD",
+        currency: "INR",
         to: "Leslie Alexander",
         avatar: "https://i.pravatar.cc/150?u=8",
         period: "Dec 15 - Dec 20",
@@ -127,7 +127,7 @@ export const paymentHistory = [
     {
         id: "ORD-11559MM",
         amount: 1250.75,
-        currency: "USD",
+        currency: "INR",
         to: "Jenny Wilson",
         avatar: "https://i.pravatar.cc/150?u=9",
         period: "Dec 5 - Dec 10",
@@ -137,7 +137,7 @@ export const paymentHistory = [
     {
         id: "TXN-99887RR",
         amount: 430.0,
-        currency: "USD",
+        currency: "INR",
         to: "Kristin Watson",
         avatar: "https://i.pravatar.cc/150?u=10",
         period: "Nov 25 - Nov 30",
@@ -147,7 +147,7 @@ export const paymentHistory = [
     {
         id: "PAY-33445WW",
         amount: 670.9,
-        currency: "USD",
+        currency: "INR",
         to: "Eleanor Pena",
         avatar: "https://i.pravatar.cc/150?u=11",
         period: "Nov 15 - Nov 20",
@@ -157,7 +157,7 @@ export const paymentHistory = [
     {
         id: "INV-22334ZZ",
         amount: 890.0,
-        currency: "USD",
+        currency: "INR",
         to: "Robert Fox",
         avatar: "https://i.pravatar.cc/150?u=12",
         period: "Nov 1 - Nov 5",
@@ -167,7 +167,7 @@ export const paymentHistory = [
     {
         id: "ORD-55443YY",
         amount: 1540.5,
-        currency: "USD",
+        currency: "INR",
         to: "Jacob Jones",
         avatar: "https://i.pravatar.cc/150?u=13",
         period: "Oct 20 - Oct 25",
@@ -177,7 +177,7 @@ export const paymentHistory = [
     {
         id: "PAY-77665UU",
         amount: 320.0,
-        currency: "USD",
+        currency: "INR",
         to: "Cody Fisher",
         avatar: "https://i.pravatar.cc/150?u=14",
         period: "Oct 10 - Oct 15",
@@ -187,7 +187,7 @@ export const paymentHistory = [
     {
         id: "TXN-88776TT",
         amount: 210.25,
-        currency: "USD",
+        currency: "INR",
         to: "Courtney Henry",
         avatar: "https://i.pravatar.cc/150?u=15",
         period: "Oct 1 - Oct 5",
@@ -197,7 +197,7 @@ export const paymentHistory = [
     {
         id: "INV-99001SS",
         amount: 675.0,
-        currency: "USD",
+        currency: "INR",
         to: "Albert Flores",
         avatar: "https://i.pravatar.cc/150?u=16",
         period: "Sep 20 - Sep 25",
@@ -207,7 +207,7 @@ export const paymentHistory = [
     {
         id: "ORD-33221RR",
         amount: 430.8,
-        currency: "USD",
+        currency: "INR",
         to: "Theresa Webb",
         avatar: "https://i.pravatar.cc/150?u=17",
         period: "Sep 10 - Sep 15",
@@ -217,7 +217,7 @@ export const paymentHistory = [
     {
         id: "PAY-66554QQ",
         amount: 550.0,
-        currency: "USD",
+        currency: "INR",
         to: "Dianne Russell",
         avatar: "https://i.pravatar.cc/150?u=18",
         period: "Sep 1 - Sep 5",
@@ -227,7 +227,7 @@ export const paymentHistory = [
     {
         id: "TXN-44332PP",
         amount: 980.5,
-        currency: "USD",
+        currency: "INR",
         to: "Jane Cooper",
         avatar: "https://i.pravatar.cc/150?u=19",
         period: "Aug 20 - Aug 25",
@@ -237,7 +237,7 @@ export const paymentHistory = [
     {
         id: "INV-11223OO",
         amount: 1340.0,
-        currency: "USD",
+        currency: "INR",
         to: "Savannah Nguyen",
         avatar: "https://i.pravatar.cc/150?u=20",
         period: "Aug 10 - Aug 15",
