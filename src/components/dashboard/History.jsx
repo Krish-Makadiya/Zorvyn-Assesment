@@ -173,8 +173,66 @@ const History = () => {
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto text-slate-700 dark:text-[#d4d4d4]">
+            {/* Mobile/Tablet Card View */}
+            <div className="lg:hidden flex flex-col divide-y divide-slate-100 dark:divide-[#262626]">
+                {displayedHistory.length > 0 ? (
+                    displayedHistory.map((payment) => (
+                        <div key={payment.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50 dark:hover:bg-[#1f1f23]/40 transition-colors">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="relative">
+                                        <img src={payment.avatar} alt={payment.to} className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-transparent shadow-sm" />
+                                        <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-[#131216] ${payment.status === 'Completed' ? 'bg-emerald-500' : payment.status === 'Pending' ? 'bg-amber-500' : 'bg-rose-500'}`} />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-black text-slate-800 dark:text-[#f2f2f2]">{payment.to}</span>
+                                        <span className="text-[10px] text-slate-500 dark:text-[#737373] font-mono">{payment.id}</span>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col items-end">
+                                    <span className="text-sm font-black text-slate-900 dark:text-emerald-400">₹{payment.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                    <span className="text-[10px] text-slate-400 dark:text-[#525252] font-medium">{payment.period}</span>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center justify-between mt-1">
+                                <span className={`inline-flex items-center justify-center px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-lg border ${payment.status === 'Completed'
+                                    ? 'bg-emerald-50/50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20'
+                                    : payment.status === 'Pending'
+                                        ? 'bg-amber-50/50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20'
+                                        : 'bg-rose-50/50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20'
+                                }`}>
+                                    {payment.status}
+                                </span>
+
+                                <div className="flex items-center gap-2">
+                                    {currentRole === 'Admin' && (
+                                        <button
+                                            onClick={() => deleteTransaction(payment.id)}
+                                            className="p-2 text-rose-500/60 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
+                                    <div
+                                        className={`w-6 h-6 rounded-lg border ${selectedItems.includes(payment.id) ? 'border-light-primary bg-light-primary/20 text-light-primary dark:text-light-primary dark:border-light-primary flex items-center justify-center' : 'border-slate-300 dark:border-[#404040] bg-white dark:bg-transparent'} cursor-pointer transition-colors`}
+                                        onClick={() => toggleSelect(payment.id)}
+                                    >
+                                        {selectedItems.includes(payment.id) && <Check size={12} strokeWidth={3} />}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="py-12 px-6 text-center text-slate-400">
+                        No transactions found
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden lg:block overflow-x-auto text-slate-700 dark:text-[#d4d4d4]">
                 <table className="w-full text-left border-collapse min-w-[900px]">
                     <thead>
                         <tr className="border-b border-slate-100 dark:border-[#262626] bg-slate-50/50 dark:bg-transparent">
