@@ -1,9 +1,16 @@
 import React, { useRef, useState } from 'react'
 import { useStore } from '../../store/useStore'
-import { savingsData, stats, cashFlowData } from '../../data/mockData'
-import { Plane, Utensils, Car, MoreHorizontal, TrendingUp, ChevronDown } from 'lucide-react'
+import { savingsData } from '../../data/mockData'
+import { Plane, Utensils, Car, MoreHorizontal, TrendingUp, ChevronDown, Coins } from 'lucide-react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
+
+const IconMap = {
+    Coins: Coins,
+    Plane: Plane,
+    Utensils: Utensils,
+    Car: Car
+};
 
 const savingsTag = [
     {
@@ -27,6 +34,7 @@ const savingsTag = [
 ]
 
 const TransactionStats = () => {
+    const { stats, cashFlowData } = useStore();
     const containerRef = useRef(null);
     const [cashFlowView, setCashFlowView] = useState('monthly');
     const [cashFlowCategory, setCashFlowCategory] = useState('expense');
@@ -37,52 +45,58 @@ const TransactionStats = () => {
 
     const currentData = cashFlowData[cashFlowView];
     const dataKey = cashFlowCategory === 'expense' && expenseSubCategory !== 'all' ? expenseSubCategory : cashFlowCategory;
-    const maxVal = Math.max(...currentData.map(d => d[dataKey])) || 1; // Default to 1 to avoid div by zero locally
-    const yAxisLabels = [maxVal, maxVal * 0.75, maxVal * 0.5, maxVal * 0.25, 0];
-    const totalAmount = currentData.reduce((sum, item) => sum + item[dataKey], 0);
 
-    // Generate SVG coordinates for the Line Chart
+    // Helper to get Icon component safely
+    const getIcon = (iconIdentifier) => {
+        if (typeof iconIdentifier === 'function' || typeof iconIdentifier === 'object') return iconIdentifier;
+        return IconMap[iconIdentifier] || Coins;
+    };
+
+    // Calculate max value for scaling the line chart
+    const maxVal = currentData.length > 0 ? Math.max(...currentData.map(d => d[dataKey] || 0)) : 0;
+    const yAxisLabels = [maxVal, maxVal * 0.75, maxVal * 0.5, maxVal * 0.25, 0];
+    const totalAmount = currentData.reduce((sum, item) => sum + (item[dataKey] || 0), 0);
+
+    // Line points for SVG
     const linePoints = currentData.map((d, i) => {
         const x = ((i + 0.5) / currentData.length) * 100;
         const y = maxVal > 0 ? 100 - ((d[dataKey] / maxVal) * 100) : 100;
         return `${x},${y}`;
     }).join(' ');
 
-    // Pie Chart Data Logic mappings from our dummy sources
-    const latestExpenseData = currentData[currentData.length - 1]; // Automatically sync to final month/year depending on user dropdown
+    const latestExpenseData = currentData[currentData.length - 1] || {};
     const pieData = [
-        { label: 'Housing', value: latestExpenseData.housing, color: '#3b82f6' },
-        { label: 'Food', value: latestExpenseData.food, color: '#10b981' },
-        { label: 'Transport', value: latestExpenseData.transport, color: '#f59e0b' },
-        { label: 'Entertainment', value: latestExpenseData.entertainment, color: '#8b5cf6' },
-        { label: 'Utilities', value: latestExpenseData.utilities, color: '#ec4899' }
+        { label: 'Housing', value: latestExpenseData.housing || 0, color: '#3b82f6' },
+        { label: 'Food', value: latestExpenseData.food || 0, color: '#10b981' },
+        { label: 'Transport', value: latestExpenseData.transport || 0, color: '#f59e0b' },
+        { label: 'Entertainment', value: latestExpenseData.entertainment || 0, color: '#8b5cf6' },
+        { label: 'Utilities', value: latestExpenseData.utilities || 0, color: '#ec4899' }
     ];
+
     const totalPieExpense = pieData.reduce((acc, curr) => acc + curr.value, 0) || 1;
+    const totalPieValue = totalPieExpense; // Alias for backward compatibility if needed
+    let cumulativeValue = 0;
 
-    // SVG Arithmetic to convert value percentages into explicit circular slice placements
-    let currentPercent = 0;
     const pieSlices = pieData.map((slice, i) => {
-        const percent = (slice.value / totalPieExpense) * 100;
-        const dashArray = `${percent} ${100 - percent}`;
-        const dashOffset = -currentPercent;
-        currentPercent += percent;
-
+        const percentage = (slice.value / totalPieValue) * 100;
+        const dashArray = `${percentage} ${100 - percentage}`;
+        const dashOffset = -cumulativeValue;
+        cumulativeValue += percentage;
         const isHovered = hoveredPieSlice === i;
 
         return (
             <circle
                 key={i}
-                r="15.915494309189533" /* Radius yielding exactly 100 circumference making % calculations native */
-                cx="21"
-                cy="21"
+                cx="21" cy="21" r="15.915494309189533"
                 fill="transparent"
                 stroke={slice.color}
-                strokeWidth={isHovered ? "8.5" : "7.5"}
+                strokeWidth={isHovered ? "8.5" : "6"}
                 strokeDasharray={dashArray}
                 strokeDashoffset={dashOffset}
-                className={`transition-all duration-300 cursor-pointer ${isHovered ? 'opacity-100 z-10' : 'opacity-70 hover:opacity-90'}`}
+                className={`transition-all duration-300 cursor-pointer ${isHovered ? 'opacity-100' : 'opacity-85 hover:opacity-100'}`}
                 onMouseEnter={() => setHoveredPieSlice(i)}
                 onMouseLeave={() => setHoveredPieSlice(null)}
+                style={{ strokeLinecap: 'butt' }}
             />
         );
     });
@@ -100,16 +114,12 @@ const TransactionStats = () => {
             stagger: 0.1,
             ease: "back.out(1.2)",
         });
-
-        // GSAP array cleanup since we're using CSS group-hover pseudo-selectors now
     }, { scope: containerRef });
 
     return (
         <div className="w-full" ref={containerRef}>
-            {/* Grid Layout for Desktop View */}
             <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-5 gap-4 md:gap-3 h-full min-h-[800px]">
 
-                {/* Smart Saving Box */}
                 <div className="stat-card bg-white dark:bg-dark-surface rounded-3xl border border-slate-200 dark:border-zinc-800/80 shadow-sm md:col-span-1 md:row-span-2 p-6 flex flex-col justify-between transition-colors duration-300">
                     <div className="">
                         <h1 className="text-2xl font-bold text-light-primary-text dark:text-dark-primary-text tracking-tight">Smart Saving</h1>
@@ -130,7 +140,7 @@ const TransactionStats = () => {
 
                     <div className="flex items-center gap-2 w-full mt-auto mb-2 px-1">
                         {savingsTag.map((tag) => (
-                            <div key={tag.id} className="w-full items-cente transition-transform hover:-translate-y-1 cursor-pointer">
+                            <div key={tag.id} className="w-full items-center transition-transform hover:-translate-y-1 cursor-pointer">
                                 <div className={`p-4 rounded-2xl flex flex-col gap-2 items-center justify-center ${tag.colorClass}`}>
                                     <tag.icon size={30} strokeWidth={2} />
                                     <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{tag.title}</p>
@@ -140,55 +150,52 @@ const TransactionStats = () => {
                     </div>
                 </div>
 
-                {/* ------------------------------------- */}
-
-                {stats.map((stat) => (
-                    <div key={stat.id} className="stat-card group relative overflow-hidden bg-white dark:bg-dark-surface rounded-3xl border border-slate-200 dark:border-zinc-800/80 shadow-sm md:col-span-1 md:row-span-1 p-6 flex flex-col justify-between transition-colors duration-300 cursor-pointer">
-                        <div className="flex items-center justify-between mb-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${stat.colorClass || 'text-blue-500 bg-blue-500/10'}`}>
-                                    <stat.icon size={20} strokeWidth={2.5} />
+                {stats.map((stat) => {
+                    const StatIcon = getIcon(stat.icon);
+                    return (
+                        <div key={stat.id} className="stat-card group relative overflow-hidden bg-white dark:bg-dark-surface rounded-3xl border border-slate-200 dark:border-zinc-800/80 shadow-sm md:col-span-1 md:row-span-1 p-6 flex flex-col justify-between transition-colors duration-300 cursor-pointer">
+                            <div className="flex items-center justify-between mb-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1">
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${stat.colorClass || 'text-blue-500 bg-blue-500/10'}`}>
+                                        <StatIcon size={20} strokeWidth={2.5} />
+                                    </div>
+                                    <h3 className="text-[15px] font-semibold text-light-primary-text dark:text-dark-primary-text">
+                                        {stat.title}
+                                    </h3>
                                 </div>
-                                <h3 className="text-[15px] font-semibold text-light-primary-text dark:text-dark-primary-text">
-                                    {stat.title}
-                                </h3>
+                                <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-400 px-2 py-0.5 rounded-full whitespace-nowrap">
+                                    <span>+{stat.percentage}</span>
+                                    <TrendingUp size={14} strokeWidth={3} />
+                                </div>
                             </div>
-                            <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-400 px-2 py-0.5 rounded-full whitespace-nowrap">
-                                <span>+{stat.percentage}</span>
-                                <TrendingUp size={14} strokeWidth={3} />
+
+                            <div className={`absolute -bottom-6 -right-6 w-32 h-32 opacity-0 group-hover:opacity-[0.08] transform translate-x-8 translate-y-8 group-hover:-translate-x-1 group-hover:-translate-y-1 transition-all duration-700 ease-out pointer-events-none z-0 ${stat.colorClass ? stat.colorClass.split(' ')[0] : 'text-blue-500'}`}>
+                                <StatIcon className="w-full h-full" strokeWidth={1} />
+                            </div>
+
+                            <div className="flex items-center gap-2 mt-auto relative z-10">
+                                <h2 className="text-2xl lg:text-[28px] font-bold text-light-primary-text dark:text-dark-primary-text tracking-tight">
+                                    {typeof stat.amount === 'number' ? `${stat.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : stat.amount}
+                                </h2>
+                                {typeof stat.amount === 'number' && (
+                                    <p className="text-sm font-medium text-slate-400 dark:text-slate-500">
+                                        INR
+                                    </p>
+                                )}
                             </div>
                         </div>
-
-                        {/* Dynamic SVG Watermark appearing from bottom-right on hover */}
-                        <div className={`absolute -bottom-6 -right-6 w-32 h-32 opacity-0 group-hover:opacity-[0.08] transform translate-x-8 translate-y-8 group-hover:-translate-x-1 group-hover:-translate-y-1 transition-all duration-700 ease-out pointer-events-none z-0 ${stat.colorClass ? stat.colorClass.split(' ')[0] : 'text-blue-500'}`}>
-                            <stat.icon className="w-full h-full" strokeWidth={1} />
-                        </div>
-
-                        <div className="flex items-center gap-2 mt-auto relative z-10">
-                            <h2 className="text-2xl lg:text-[28px] font-bold text-light-primary-text dark:text-dark-primary-text tracking-tight">
-                                {typeof stat.amount === 'number' ? `${stat.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : stat.amount}
-                            </h2>
-                            {typeof stat.amount === 'number' && (
-                                <p className="text-sm font-medium text-slate-400 dark:text-slate-500">
-                                    INR
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                ))}
-
-                {/* ------------------------------------------------------ */}
+                    );
+                })}
 
                 <div className="stat-card bg-white dark:bg-dark-surface rounded-3xl border border-slate-200 dark:border-zinc-800/80 shadow-sm md:col-span-1 md:row-span-3 md:col-start-4 md:row-start-1 p-5 flex flex-col transition-colors duration-300">
-                    {/* 3D Interactive Flip Credit Card Container */}
                     <div className="w-full aspect-[1.58] group perspective-[1000px] cursor-pointer">
-                        <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                        <div className="relative w-full h-full transition-transform duration-700 transform-3d group-hover:transform-[rotateY(180deg)]">
 
                             {/* Face 1: Detailed Metadata (Back View - appears on hover) */}
-                            <div className="absolute inset-0 w-full h-full rounded-2xl p-6 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#29421a] via-[#080b06] to-[#162910] text-white shadow-xl shadow-green-900/10 border border-white/10 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                            <div className="absolute inset-0 w-full h-full rounded-2xl p-6 flex flex-col justify-between overflow-hidden bg-linear-to-br from-[#29421a] via-[#080b06] to-[#162910] text-white shadow-xl shadow-green-900/10 border border-white/10 backface-hidden transform-[rotateY(180deg)]">
                                 <div className="absolute -top-[40%] -left-[10%] w-[80%] h-[80%] rounded-full bg-green-500/15 blur-[60px] pointer-events-none"></div>
                                 <div className="absolute -bottom-[20%] right-[0%] w-[60%] h-[60%] rounded-full bg-green-600/10 blur-[50px] pointer-events-none"></div>
-                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-white/[0.05] pointer-events-none"></div>
+                                <div className="absolute inset-0 bg-linear-to-tr from-transparent via-white/2 to-white/5 pointer-events-none"></div>
 
                                 <div className="flex justify-between items-start z-10 relative">
                                     <svg width="34" height="24" viewBox="0 0 36 26" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white/80 mt-0.5 opacity-90">
@@ -223,9 +230,9 @@ const TransactionStats = () => {
                             </div>
 
                             {/* Face 2: Official Minimalist Front (Default View) */}
-                            <div className="absolute inset-0 w-full h-full rounded-2xl p-6 flex flex-col justify-between overflow-hidden bg-gradient-to-tl from-[#193210] via-[#080b06] to-[#12220d] text-white shadow-xl shadow-green-900/10 border border-white/10 [backface-visibility:hidden]">
+                            <div className="absolute inset-0 w-full h-full rounded-2xl p-6 flex flex-col justify-between overflow-hidden bg-linear-to-tl from-[#193210] via-[#080b06] to-[#12220d] text-white shadow-xl shadow-green-900/10 border border-white/10 backface-hidden">
                                 <div className="absolute top-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-emerald-500/10 blur-[50px] pointer-events-none"></div>
-                                <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-white/[0.01] to-white/[0.04] pointer-events-none"></div>
+                                <div className="absolute inset-0 bg-linear-to-bl from-transparent via-white/1 to-white/4 pointer-events-none"></div>
 
                                 {/* Top: Bank Brand & Contactless */}
                                 <div className="flex justify-between items-center z-10 relative">
@@ -359,8 +366,8 @@ const TransactionStats = () => {
                                         if (cat !== 'expense') setExpenseSubCategory('all');
                                     }}
                                     className={`px-5 sm:px-6 py-1.5 rounded-full text-[13px] sm:text-sm font-semibold transition-all duration-300 capitalize ${cashFlowCategory === cat
-                                            ? 'bg-white dark:bg-[#2c2d33] text-light-primary-text dark:text-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]'
-                                            : 'text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200'
+                                        ? 'bg-white dark:bg-[#2c2d33] text-light-primary-text dark:text-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]'
+                                        : 'text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200'
                                         }`}
                                 >
                                     {cat}
@@ -376,8 +383,8 @@ const TransactionStats = () => {
                                         key={subcat}
                                         onClick={() => setExpenseSubCategory(subcat)}
                                         className={`px-3 py-1.5 sm:py-1 rounded-full text-[11px] sm:text-[12px] font-semibold transition-all duration-200 capitalize ${expenseSubCategory === subcat
-                                                ? 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30'
-                                                : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50 dark:bg-[#232428] dark:text-zinc-400 dark:border-zinc-700/50 dark:hover:bg-[#2a2b30]'
+                                            ? 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30'
+                                            : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50 dark:bg-[#232428] dark:text-zinc-400 dark:border-zinc-700/50 dark:hover:bg-[#2a2b30]'
                                             } border shadow-sm cursor-pointer`}
                                     >
                                         {subcat === 'all' ? 'All Expenses' : subcat}
@@ -392,7 +399,7 @@ const TransactionStats = () => {
                         {/* Background Lines & Y-Axis */}
                         <div className="absolute inset-x-0 inset-y-0 flex flex-col justify-between pb-8 pt-2">
                             {yAxisLabels.map((val, idx) => (
-                                <div key={idx} className="flex flex-row items-center w-full relative h-[1px]">
+                                <div key={idx} className="flex flex-row items-center w-full relative h-px">
                                     <span className="text-[10px] sm:text-xs font-semibold text-slate-400 dark:text-zinc-500 w-8 sm:w-10 text-right pr-2 shrink-0 -mt-[11px]">
                                         {val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val.toFixed(0)}
                                     </span>

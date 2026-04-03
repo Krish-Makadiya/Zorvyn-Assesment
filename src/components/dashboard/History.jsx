@@ -1,13 +1,15 @@
 import React, { useState, useMemo } from 'react';
-import { paymentHistory } from '../../data/mockData';
-import { Check, Calendar, Sun, ChevronDown, Download, Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { useStore } from '../../store/useStore';
+import { Check, Calendar, Sun, ChevronDown, Download, Search, ArrowUpDown, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
 
 const History = () => {
+    const { paymentHistory, deleteTransaction, addTransaction, currentRole } = useStore();
     const [visibleCount, setVisibleCount] = useState(10);
     const [selectedItems, setSelectedItems] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
     const [filterStatus, setFilterStatus] = useState("All");
+    const [showAddModal, setShowAddModal] = useState(false);
 
     // Helper to parse date for sorting
     const parseDate = (period) => {
@@ -56,7 +58,7 @@ const History = () => {
         }
 
         return result;
-    }, [searchTerm, sortConfig, filterStatus]);
+    }, [searchTerm, sortConfig, filterStatus, paymentHistory]);
 
     const displayedHistory = filteredAndSortedHistory.slice(0, visibleCount);
 
@@ -123,7 +125,29 @@ const History = () => {
                     </button>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
+                    {selectedItems.length > 0 && currentRole === 'Admin' && (
+                        <button
+                            onClick={() => {
+                                selectedItems.forEach(id => deleteTransaction(id));
+                                setSelectedItems([]);
+                            }}
+                            className="flex items-center gap-2 bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 px-3 py-2 rounded-lg text-[13px] hover:bg-rose-500/20 transition-all font-semibold"
+                        >
+                            <Trash2 size={15} />
+                            Delete ({selectedItems.length})
+                        </button>
+                    )}
+
+                    {currentRole === 'Admin' && (
+                        <button
+                            onClick={() => setShowAddModal(true)}
+                            className="flex items-center gap-2 bg-emerald-500 text-white px-4 py-2.5 rounded-lg text-[13px] hover:bg-emerald-600 transition-all font-semibold shadow-lg shadow-emerald-500/20 active:scale-95"
+                        >
+                            Add New
+                        </button>
+                    )}
+
                     <span className="text-[12px] text-slate-400 dark:text-[#525252] font-medium mr-2">
                         Showing {displayedHistory.length} of {filteredAndSortedHistory.length}
                     </span>
@@ -179,16 +203,10 @@ const History = () => {
                                 Period
                             </th>
                             <th className="py-4 px-6 font-medium text-slate-500 dark:text-[#a3a3a3] text-[13.5px] border-r border-slate-100 dark:border-[#262626] whitespace-nowrap transition-colors">
-                                Method
+                                Status
                             </th>
-                            <th
-                                className="py-4 pl-6 pr-6 font-medium text-slate-500 dark:text-[#a3a3a3] text-[13.5px] whitespace-nowrap transition-colors cursor-pointer hover:bg-slate-100/50 dark:hover:bg-[#1f1f23]/50 group"
-                                onClick={() => handleSort('date')}
-                            >
-                                <div className="flex items-center justify-between">
-                                    Processed Date
-                                    <SortIcon columnKey="date" />
-                                </div>
+                            <th className="py-4 px-6 font-medium text-slate-500 dark:text-[#a3a3a3] text-[13.5px] transition-colors">
+                                Actions
                             </th>
                         </tr>
                     </thead>
@@ -197,7 +215,7 @@ const History = () => {
                             displayedHistory.map((payment) => (
                                 <tr
                                     key={payment.id}
-                                    className="border-b border-slate-100 dark:border-[#262626] hover:bg-slate-50/80 dark:hover:bg-[#1f1f23]/40 transition-colors"
+                                    className="border-b border-slate-100 dark:border-[#262626] hover:bg-slate-50/80 dark:hover:bg-[#1f1f23]/40 transition-colors group/row"
                                 >
                                     <td className="py-4 pl-5 w-12 border-r border-slate-100 dark:border-[#262626] transition-colors">
                                         <div
@@ -218,7 +236,7 @@ const History = () => {
                                     <td className="py-4 px-6 border-r border-slate-100 dark:border-[#262626] whitespace-nowrap transition-colors">
                                         <div className="flex items-center gap-3">
                                             <div className="relative">
-                                                <img src={payment.avatar} alt={payment.to} className="w-8 h-8 rounded-full object-cover opacity-90 border border-slate-200 dark:border-transparent group-hover:scale-110 transition-transform" />
+                                                <img src={payment.avatar} alt={payment.to} className="w-8 h-8 rounded-full object-cover opacity-90 border border-slate-200 dark:border-transparent group-hover/row:scale-110 transition-transform" />
                                                 <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-[#131216] ${payment.status === 'Completed' ? 'bg-emerald-500' : payment.status === 'Pending' ? 'bg-amber-500' : 'bg-rose-500'}`} />
                                             </div>
                                             <span className="text-[14px] text-slate-700 dark:text-[#a3a3a3] font-medium">
@@ -230,12 +248,24 @@ const History = () => {
                                         {payment.period}
                                     </td>
                                     <td className="py-4 px-6 border-r border-slate-100 dark:border-[#262626] whitespace-nowrap transition-colors">
-                                        <span className="inline-flex items-center justify-center px-2.5 py-[3px] text-[11px] font-semibold rounded-md bg-slate-100 dark:bg-[#27272a] text-slate-600 dark:text-[#d4d4d4] border border-slate-200 dark:border-[#3f3f46]/40">
-                                            {payment.method}
+                                        <span className={`inline-flex items-center justify-center px-2.5 py-[3px] text-[11px] font-bold rounded-md border ${payment.status === 'Completed'
+                                                ? 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20'
+                                                : payment.status === 'Pending'
+                                                    ? 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20'
+                                                    : 'bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20'
+                                            }`}>
+                                            {payment.status}
                                         </span>
                                     </td>
-                                    <td className="py-4 pl-6 pr-6 text-[13.5px] text-slate-600 dark:text-[#a3a3a3] whitespace-nowrap font-medium transition-colors">
-                                        {payment.period.split(' - ')[0]}
+                                    <td className="py-4 px-6 whitespace-nowrap">
+                                        {currentRole === 'Admin' && (
+                                            <button
+                                                onClick={() => deleteTransaction(payment.id)}
+                                                className="p-1.5 text-slate-400 hover:text-rose-500 transition-colors rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             ))
@@ -270,6 +300,72 @@ const History = () => {
                     </button>
                 </div>
             )}
+
+            {/* Add Transaction Modal */}
+            {showAddModal && <AddTransactionModal onClose={() => setShowAddModal(false)} onSubmit={addTransaction} />}
+        </div>
+    );
+};
+
+const AddTransactionModal = ({ onClose, onSubmit }) => {
+    const [formData, setFormData] = useState({
+        to: '',
+        amount: '',
+        currency: 'USD',
+        status: 'Completed',
+        method: 'Bank Transfer'
+    });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const newTxn = {
+            id: `TXN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+            ...formData,
+            amount: parseFloat(formData.amount),
+            avatar: `https://i.pravatar.cc/150?u=${Math.floor(Math.random() * 50)}`,
+            period: `${new Date().toLocaleString('default', { month: 'short' })} ${new Date().getDate()} - ${new Date().getDate()}`
+        };
+        onSubmit(newTxn);
+        onClose();
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="bg-white dark:bg-[#1a1b1e] w-full max-w-md rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                <div className="p-6 border-b border-slate-100 dark:border-zinc-800 flex justify-between items-center">
+                    <h2 className="text-xl font-bold dark:text-white">New Transaction</h2>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">✕</button>
+                </div>
+                <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
+                    <div className="flex flex-col gap-1">
+                        <label className="text-xs font-semibold text-slate-500 uppercase">Recipient Name</label>
+                        <input required value={formData.to} onChange={e => setFormData({ ...formData, to: e.target.value })} className="bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none dark:text-white" placeholder="e.g. John Doe" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <label className="text-xs font-semibold text-slate-500 uppercase">Amount</label>
+                        <input required type="number" step="0.01" value={formData.amount} onChange={e => setFormData({ ...formData, amount: e.target.value })} className="bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none dark:text-white" placeholder="0.00" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-1">
+                            <label className="text-xs font-semibold text-slate-500 uppercase">Status</label>
+                            <select value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })} className="bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none dark:text-white">
+                                <option>Completed</option>
+                                <option>Pending</option>
+                                <option>Failed</option>
+                            </select>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <label className="text-xs font-semibold text-slate-500 uppercase">Method</label>
+                            <select value={formData.method} onChange={e => setFormData({ ...formData, method: e.target.value })} className="bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none dark:text-white">
+                                <option>Bank Transfer</option>
+                                <option>Wire Transfer</option>
+                                <option>Credit Card</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" className="mt-4 bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-500/30 hover:bg-emerald-600 transition-all">Submit Transaction</button>
+                </form>
+            </div>
         </div>
     );
 };
