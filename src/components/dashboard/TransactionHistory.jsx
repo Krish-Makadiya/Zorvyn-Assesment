@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../../store/useStore';
-import { Check, Calendar, Sun, ChevronDown, Download, Search, ArrowUpDown, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
+import { Check, ChevronDown, Download, Search, ArrowUpDown, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
+import AddTransactionModal from './AddTransactionModal';
 
-const History = () => {
+const TransactionHistory = () => {
     const { paymentHistory, deleteTransaction, addTransaction, currentRole } = useStore();
     const [visibleCount, setVisibleCount] = useState(10);
     const [selectedItems, setSelectedItems] = useState([]);
@@ -33,7 +34,8 @@ const History = () => {
             result = result.filter(item =>
                 item.id.toLowerCase().includes(lowSearch) ||
                 item.to.toLowerCase().includes(lowSearch) ||
-                item.method.toLowerCase().includes(lowSearch)
+                item.method.toLowerCase().includes(lowSearch) ||
+                item.status.toLowerCase().includes(lowSearch)
             );
         }
 
@@ -87,8 +89,27 @@ const History = () => {
         return sortConfig.direction === 'asc' ? <ArrowUp size={14} className="ml-1 text-emerald-500" /> : <ArrowDown size={14} className="ml-1 text-emerald-500" />;
     };
 
+    const handleDownloadCSV = () => {
+        const headers = ["ID", "Amount", "Recipient", "Period", "Method", "Status"];
+        const rows = displayedHistory.map(p => [
+            p.id, p.amount, p.to, p.period, (p.method || 'Bank Transfer'), p.status
+        ]);
+        
+        let csvContent = "data:text/csv;charset=utf-8," 
+            + headers.join(",") + "\n"
+            + rows.map(e => e.join(",")).join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `FinVision_Transactions_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
-        <div className="history-container w-full bg-white dark:bg-[#131216] rounded-xl border border-slate-200 dark:border-[#262626] overflow-hidden flex flex-col font-sans shadow-sm dark:shadow-none transition-colors duration-300">
+        <div className="history-container w-full bg-white dark:bg-[#131216] rounded-xl border border-slate-200 dark:border-[#262626] overflow-hidden flex flex-col font-sans shadow-sm dark:shadow-none transition-all duration-300">
             {/* Top Toolbar */}
             <div className="p-4 border-b border-slate-100 dark:border-[#262626] flex flex-wrap items-center justify-between gap-4 transition-colors">
                 <div className="flex flex-wrap items-center gap-3">
@@ -97,10 +118,10 @@ const History = () => {
                         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#737373]" size={16} />
                         <input
                             type="text"
-                            placeholder="Search ID, Name or Method..."
+                            placeholder="Search transactions..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="bg-slate-50 dark:bg-[#1a1a1e] border border-slate-200 dark:border-[#262626] text-slate-600 dark:text-[#a3a3a3] text-[13px] rounded-lg pl-10 pr-4 py-2.5 focus:outline-none w-[280px] placeholder:text-slate-400 dark:placeholder:text-[#525252] shadow-inner font-medium transition-colors focus:ring-1 focus:ring-emerald-500/30"
+                            className="bg-slate-50 dark:bg-[#1a1a1e] border border-slate-200 dark:border-[#262626] text-slate-600 dark:text-[#a3a3a3] text-[13px] rounded-lg pl-10 pr-4 py-2.5 focus:outline-none w-[280px] shadow-inner font-medium transition-colors focus:ring-1 focus:ring-emerald-500/30"
                         />
                     </div>
 
@@ -147,24 +168,7 @@ const History = () => {
                         Showing {displayedHistory.length} of {filteredAndSortedHistory.length}
                     </span>
                     <button 
-                        onClick={() => {
-                            const headers = ["ID", "Amount", "Recipient", "Period", "Method", "Status"];
-                            const rows = displayedHistory.map(p => [
-                                p.id, p.amount, p.to, p.period, p.method, p.status
-                            ]);
-                            
-                            let csvContent = "data:text/csv;charset=utf-8," 
-                                + headers.join(",") + "\n"
-                                + rows.map(e => e.join(",")).join("\n");
-
-                            const encodedUri = encodeURI(csvContent);
-                            const link = document.createElement("a");
-                            link.setAttribute("href", encodedUri);
-                            link.setAttribute("download", `FinVision_Transactions_${new Date().toISOString().split('T')[0]}.csv`);
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                        }}
+                        onClick={handleDownloadCSV}
                         className="p-2 text-slate-400 dark:text-[#a3a3a3] opacity-80 hover:opacity-100 transition-colors bg-transparent hover:bg-slate-50 dark:hover:bg-[#1f1f23] rounded-lg group"
                         title="Export current view to CSV"
                     >
@@ -225,8 +229,17 @@ const History = () => {
                         </div>
                     ))
                 ) : (
-                    <div className="py-12 px-6 text-center text-slate-400">
-                        No transactions found
+                    <div className="py-20 text-center text-slate-400 dark:text-[#525252]">
+                        <div className="flex flex-col items-center gap-2">
+                            <Search size={32} className="opacity-20" />
+                            <p className="text-[14px]">No transactions found matching your criteria</p>
+                            <button
+                                onClick={() => { setSearchTerm(""); setFilterStatus("All"); }}
+                                className="text-emerald-500 text-[13px] hover:underline mt-1"
+                            >
+                                Clear all filters
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
@@ -375,73 +388,9 @@ const History = () => {
                 </div>
             )}
 
-            {/* Add Transaction Modal */}
             {showAddModal && <AddTransactionModal onClose={() => setShowAddModal(false)} onSubmit={addTransaction} />}
         </div>
     );
 };
 
-const AddTransactionModal = ({ onClose, onSubmit }) => {
-    const [formData, setFormData] = useState({
-        to: '',
-        amount: '',
-        currency: 'INR',
-        status: 'Completed',
-        method: 'Bank Transfer'
-    });
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const newTxn = {
-            id: `TXN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-            ...formData,
-            amount: parseFloat(formData.amount),
-            avatar: `https://i.pravatar.cc/150?u=${Math.floor(Math.random() * 50)}`,
-            period: `${new Date().toLocaleString('default', { month: 'short' })} ${new Date().getDate()} - ${new Date().getDate()}`
-        };
-        onSubmit(newTxn);
-        onClose();
-    };
-
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-[#1a1b1e] w-full max-w-md rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-                <div className="p-6 border-b border-slate-100 dark:border-zinc-800 flex justify-between items-center">
-                    <h2 className="text-xl font-bold dark:text-white">New Transaction</h2>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">✕</button>
-                </div>
-                <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
-                    <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-500 uppercase">Recipient Name</label>
-                        <input required value={formData.to} onChange={e => setFormData({ ...formData, to: e.target.value })} className="bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none dark:text-white" placeholder="e.g. John Doe" />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-500 uppercase">Amount</label>
-                        <input required type="number" step="0.01" value={formData.amount} onChange={e => setFormData({ ...formData, amount: e.target.value })} className="bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none dark:text-white" placeholder="0.00" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1">
-                            <label className="text-xs font-semibold text-slate-500 uppercase">Status</label>
-                            <select value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })} className="bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none dark:text-white">
-                                <option>Completed</option>
-                                <option>Pending</option>
-                                <option>Failed</option>
-                            </select>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <label className="text-xs font-semibold text-slate-500 uppercase">Method</label>
-                            <select value={formData.method} onChange={e => setFormData({ ...formData, method: e.target.value })} className="bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none dark:text-white">
-                                <option>Bank Transfer</option>
-                                <option>Wire Transfer</option>
-                                <option>Credit Card</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="submit" className="mt-4 bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-500/30 hover:bg-emerald-600 transition-all">Submit Transaction</button>
-                </form>
-            </div>
-        </div>
-    );
-};
-
-export default History;
+export default TransactionHistory;
