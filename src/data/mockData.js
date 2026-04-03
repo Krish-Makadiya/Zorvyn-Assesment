@@ -1,4 +1,4 @@
-import { Coins } from "lucide-react";
+import { Coins, CreditCard } from "lucide-react";
 
 export const savingsData = {
     totalSavings: 12540.0,
@@ -10,7 +10,7 @@ export const stats = [
         title: "Total Balance",
         amount: 12540.0,
         percentage: "100%",
-        icon: Coins,
+        icon: 'CreditCard',
         colorClass:
             "text-light-primary bg-light-primary/10 dark:text-dark-primary dark:bg-dark-primary/10",
     },
@@ -19,7 +19,7 @@ export const stats = [
         title: "Monthly Income",
         amount: 5200.0,
         percentage: "41%",
-        icon: Coins,
+        icon: 'Income',
         colorClass:
             "text-light-secondary bg-light-secondary/10 dark:text-dark-secondary dark:bg-dark-secondary/10",
     },
@@ -28,7 +28,7 @@ export const stats = [
         title: "Monthly Expenses",
         amount: 3150.0,
         percentage: "25%",
-        icon: Coins,
+        icon: 'Expense',
         colorClass:
             "text-light-fail bg-light-fail/10 dark:text-dark-fail dark:bg-dark-fail/10",
     },
@@ -37,7 +37,7 @@ export const stats = [
         title: "Savings Rate",
         amount: "39%",
         percentage: "39%",
-        icon: Coins,
+        icon: 'Savings',
         colorClass:
             "text-light-success bg-light-success/10 dark:text-dark-success dark:bg-dark-success/10",
     },

@@ -15,11 +15,11 @@ const calculateTotalBalance = (transactions) => {
     return baseBalance + (currentSum - initialSum);
 };
 
-// Function to make stats serializable by replacing component references with strings
+// Function to make stats serializable
 const getSerializableStats = (statsArr) => {
     return statsArr.map((s) => ({
         ...s,
-        icon: typeof s.icon === "string" ? s.icon : "Coins", // Map component to its string name
+        icon: typeof s.icon === "string" ? s.icon : "Coins",
     }));
 };
 
