@@ -85,4 +85,20 @@ FinVision is built with a **Mobile-First** mindset. The massive desktop bento gr
 
 ---
 
+## 🌐 Dynamic Dashboard Capabilities
+While this project focuses on a high-speed, persistent static dataset to demonstrate UI/UX excellence, I have extensive experience building **fully dynamic, data-driven dashboards** across various industries (Real Estate, Healthcare, E-commerce).
+
+### **Key Dynamic Integrations I've Implemented:**
+*   **Real-time Data Fetching**: Seamless integration with RESTful and GraphQL APIs for live financial updates.
+*   **Server-Side State**: Synchronized backends with high-performance databases (PostgreSQL, MongoDB) using Node.js/Express.
+*   **Authentication & Security**: JWT-based auth systems to protect sensitive financial data.
+
+### **Portfolio Showcase (Other Domains):**
+| **Project** | **Domain** | **Visual Preview** | **Live Link** |
+| :--- | :--- | :--- | :--- |
+| **Arogya** | Healthcare (Live Patient Stats) | ![Arogya Healthcare](https://res.cloudinary.com/dcwoprlbv/image/upload/q_auto/f_auto/v1775207872/arogya-bay-six.vercel.app_patient_dashboard_drpyxu.png) | [🔗 View Live Project](https://arogya-healthcare.link/) |
+| **Mockraft** | EdTech (Student Performance) | ![Mockraft EdTech](https://res.cloudinary.com/dcwoprlbv/image/upload/q_auto/f_auto/v1775207872/dashboard_3_ja9ecd.png) | [🔗 View Live Project](https://mockraft-edtech.link/) |
+
+---
+
 *Designed and Developed for high-performance financial management.* 📈🚀
